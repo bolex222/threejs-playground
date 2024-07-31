@@ -69,8 +69,9 @@ class Experience {
     const ground = new TerrainPlane(1000, 2);
     this.mainScene.add(ground.scene);
 
-    this.mainScene.background = new Color(0x000000);
-    // this.mainScene.fog = new FogExp2(0xcccccc, 0.2);
+    // this.mainScene.fog = new Fog(0xcccccc, 10, 15);
+    this.mainScene.background = new Color(0xcccccc);
+    this.mainScene.fog = new FogExp2(0xcccccc, 0.00025);
 
     this.orbitControls = new OrbitControls(
       this.camera,
