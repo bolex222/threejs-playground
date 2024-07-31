@@ -40,11 +40,11 @@ void main() {
 
     vec2 fogS = vUv;
     fogS -= 0.5; 
-    fogS *= 50.;
+    fogS *= 20.;
     fogS += 0.5;
     float fog = distance(fogS, vec2(0.5));
 
-    float line_size = 0.003 + (0.01 * fog);
+    float line_size = 0.003 + (0.03 * fog);
 
     float grid = (1. - step(line_size, ov.x) * step(line_size, ov.y)) + (1. - step(ov.x, 1.-line_size) * step(ov.y, 1.-line_size)); 
     grid = clamp(grid, 0., 1.);

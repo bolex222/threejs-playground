@@ -2,12 +2,7 @@ import "./style.css";
 
 import {
   AxesHelper,
-  BoxGeometry,
   Color,
-  Fog,
-  FogExp2,
-  Mesh,
-  MeshBasicMaterial,
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
@@ -16,29 +11,8 @@ import ticker from "./ticker";
 import screen from "./screenManager";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import TerrainPlane from "./terrainPlane/terrainPlan";
-
-class BoxScene {
-  public scene: Scene;
-  private box: Mesh;
-
-  constructor() {
-    this.scene = new Scene();
-    this.box = this.createRedBox();
-    this.scene.add(this.box);
-
-    ticker.subscribe(this.tick);
-  }
-
-  private createRedBox() {
-    const geometry = new BoxGeometry();
-    const material = new MeshBasicMaterial({ color: 0xff0000 });
-    return new Mesh(geometry, material);
-  }
-
-  private tick = (_: number, delta: number) => {
-    this.box.rotateY(delta * 0.003);
-  };
-}
+import { ExperimentalBox } from "./experimentalBox/experimentalBox";
+import gui from "./gui/gui";
 
 class Experience {
   private camera: PerspectiveCamera;
@@ -46,11 +20,14 @@ class Experience {
   private mainScene: Scene;
   private canvas: HTMLCanvasElement;
   private orbitControls: OrbitControls | null = null;
+  private guiOpt = {
+    orbitControls: true,
+  };
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.camera = new PerspectiveCamera(50, screen.height / screen.width);
-    this.camera.position.set(0, 5, 5);
+    this.camera.position.set(0, 5, 10);
     this.camera.lookAt(0, 0, 0);
     this.renderer = new WebGLRenderer({
       canvas: this.canvas,
@@ -58,8 +35,6 @@ class Experience {
     });
     this.mainScene = new Scene();
 
-    const boxScene = new BoxScene();
-    this.mainScene.add(boxScene.scene);
     this.handleResize(screen.width, screen.height, screen.dpr);
     screen.subscribe(this.handleResize);
 
@@ -70,12 +45,20 @@ class Experience {
     this.mainScene.add(ground.scene);
 
     this.mainScene.background = new Color(0x000000);
-    // this.mainScene.fog = new FogExp2(0xcccccc, 0.2);
+
+    const expBox = new ExperimentalBox();
+    this.mainScene.add(expBox.scene);
 
     this.orbitControls = new OrbitControls(
       this.camera,
       this.renderer.domElement,
     );
+    const guiFolder = gui.addFolder("MAIN");
+    guiFolder.add(this.guiOpt, "orbitControls").onChange((value: boolean) => {
+      if (this.orbitControls) {
+        this.orbitControls.enabled = value;
+      }
+    });
   }
 
   handleResize = (width: number, height: number, dpr: number) => {
