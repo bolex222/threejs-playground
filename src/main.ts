@@ -4,7 +4,9 @@ import {
   AxesHelper,
   Color,
   PerspectiveCamera,
+  PointLight,
   Scene,
+  Vector3,
   WebGLRenderer,
 } from "three";
 import ticker from "./ticker";
@@ -20,6 +22,7 @@ class Experience {
   private mainScene: Scene;
   private canvas: HTMLCanvasElement;
   private orbitControls: OrbitControls | null = null;
+  private cameraPointLight: PointLight | null = null;
   private guiOpt = {
     orbitControls: true,
   };
@@ -35,16 +38,20 @@ class Experience {
     });
     this.mainScene = new Scene();
 
+    this.cameraPointLight = new PointLight(0xffffff, 20);
+    this.cameraPointLight.position.set(0, 5, 10);
+    this.mainScene.add(this.cameraPointLight);
+
     this.handleResize(screen.width, screen.height, screen.dpr);
     screen.subscribe(this.handleResize);
 
-    const axesHelper = new AxesHelper(1);
+    const axesHelper = new AxesHelper(10000);
     this.mainScene.add(axesHelper);
 
-    const ground = new TerrainPlane(1000, 2);
+    const ground = new TerrainPlane(1000, 1);
     this.mainScene.add(ground.scene);
 
-    this.mainScene.background = new Color(0x000000);
+    this.mainScene.background = new Color("#37323E");
 
     const expBox = new ExperimentalBox();
     this.mainScene.add(expBox.scene);
@@ -65,7 +72,8 @@ class Experience {
     this.canvas.width = width * dpr;
     this.canvas.height = height * dpr;
     this.camera.aspect = width / height;
-    this.renderer.setPixelRatio(dpr);
+    console.log(dpr);
+    this.renderer.setPixelRatio(dpr * 2);
     this.renderer.setSize(width, height);
     this.camera.updateProjectionMatrix();
   };
@@ -76,6 +84,15 @@ class Experience {
 
   private tick = () => {
     this.orbitControls?.update();
+    if (this.cameraPointLight) {
+      this.cameraPointLight.position.set(
+        this.camera.position.x,
+        this.camera.position.y,
+        this.camera.position.z,
+      );
+      this.cameraPointLight.intensity =
+        5 + (this.cameraPointLight.position.distanceTo(new Vector3(0, 0, 0)) * 2);
+    }
     this.renderer.render(this.mainScene, this.camera);
   };
 }

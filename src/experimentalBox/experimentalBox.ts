@@ -3,14 +3,12 @@ import {
   Scene,
   Mesh,
   BoxGeometry,
-  MeshBasicMaterial,
   MeshStandardMaterial,
   PointLight,
   AmbientLight,
 } from "three";
 import gui from "../gui/gui";
 import { degToRad } from "three/src/math/MathUtils.js";
-// import type { GUI } from "lil-gui";
 
 export class ExperimentalBox {
   public scene: Scene;
@@ -43,14 +41,14 @@ export class ExperimentalBox {
     this.box = this.createRedBox();
     this.scene.add(this.box);
 
-    const pointLight = new PointLight(0xffffff, 1000);
-    pointLight.position.set(5, 5, 5);
-    pointLight.castShadow = true;
-    this.scene.add(pointLight);
+    // const pointLight = new PointLight(0xffffff, 1000);
+    // pointLight.position.set(5, 5, 5);
+    // pointLight.castShadow = true;
+    // this.scene.add(pointLight);
 
     // const pont = new Ponc
 
-    const ambiantLight = new AmbientLight(0xffffff, 100);
+    const ambiantLight = new AmbientLight(0xffffff, 3);
     this.scene.add(ambiantLight);
 
     ticker.subscribe(this.tick);
@@ -65,13 +63,11 @@ export class ExperimentalBox {
   };
 
   private createRedBox() {
-    const geometry = new BoxGeometry(2, 2, 2);
+    const geometry = new BoxGeometry(1, 1, 1);
     const material = new MeshStandardMaterial({
-      color: 0x00ff00,
-      metalness: 0.6,
-      roughness: 0.3,
-
-      // wireframe: true,
+      color: "#BFBDC1",
+      metalness: 0,
+      roughness: 0.5,
     });
     return new Mesh(geometry, material);
   }
