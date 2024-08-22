@@ -53,7 +53,6 @@ class Entry {
     this.cameraController = new CameraController(
       this.renderer.domElement,
       this.mainScene,
-      this.mainSheetAnimation,
     );
 
     this.handleResize(screen.width, screen.height, screen.dpr);
