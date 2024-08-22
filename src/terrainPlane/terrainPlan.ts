@@ -1,19 +1,9 @@
-import {
-  DoubleSide,
-  FogExp2,
-  Mesh,
-  PlaneGeometry,
-  Scene,
-  ShaderMaterial,
-} from "three";
+import { DoubleSide, Mesh, PlaneGeometry, ShaderMaterial } from "three";
 
 export default class TerrainPlane {
   planMesh: Mesh;
-  scene: Scene;
 
   constructor(size: number, gridScale: number = 1) {
-    this.scene = new Scene();
-    this.scene.fog = new FogExp2(0xcccccc, 0.2);
     const planeGeometry = new PlaneGeometry(size, size);
     const mat = new ShaderMaterial({
       vertexShader: `
@@ -40,17 +30,16 @@ void main() {
 
     vec2 fogS = vUv;
     fogS -= 0.5; 
-    fogS *= 20.;
+    fogS *= 10.;
     fogS += 0.5;
     float fog = distance(fogS, vec2(0.5));
 
-    float line_size = 0.003 + (0.03 * fog);
+    float line_size = 0.01 + (0.1 * fog);
 
     float grid = (1. - step(line_size, ov.x) * step(line_size, ov.y)) + (1. - step(ov.x, 1.-line_size) * step(ov.y, 1.-line_size)); 
     grid = clamp(grid, 0., 1.);
-    vec3 color =vec3(0.827,0.827,0.827); 
-
-
+    // vec3 color = vec3(0.827,0.827,0.827); 
+    vec3 color = vec3(0.427,0.416,0.459); 
 
     gl_FragColor = vec4(grid * color , grid * (1. - fog));
 }
@@ -68,6 +57,5 @@ void main() {
     mat.side = DoubleSide;
     this.planMesh = new Mesh(planeGeometry, mat);
     this.planMesh.rotation.set(-1.5708, 0, 0);
-    this.scene.add(this.planMesh);
   }
 }

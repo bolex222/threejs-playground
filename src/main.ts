@@ -1,97 +1,113 @@
-import "./style.css";
-
 import {
-  AxesHelper,
-  Color,
-  PerspectiveCamera,
   Scene,
   WebGLRenderer,
+  Group,
+  TextureLoader,
+  Texture,
+  AmbientLight,
 } from "three";
-import ticker from "./ticker";
-import screen from "./screenManager";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
-import TerrainPlane from "./terrainPlane/terrainPlan";
-import { ExperimentalBox } from "./experimentalBox/experimentalBox";
-import gui from "./gui/gui";
+import { ExperienceSetter } from "./core/ExperienceSetter";
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
+import animationManager from "./core/theatre";
+import { types } from "@theatre/core";
+import CameraController from "./core/CameraController";
 
-class Experience {
-  private camera: PerspectiveCamera;
-  private renderer: WebGLRenderer;
-  private mainScene: Scene;
-  private canvas: HTMLCanvasElement;
-  private orbitControls: OrbitControls | null = null;
-  private guiOpt = {
-    orbitControls: true,
-  };
+export class Experience extends ExperienceSetter {
+  private group: Group;
+  private cameraController: CameraController;
 
-  constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
-    this.camera = new PerspectiveCamera(50, screen.height / screen.width);
-    this.camera.position.set(0, 5, 10);
-    this.camera.lookAt(0, 0, 0);
-    this.renderer = new WebGLRenderer({
-      canvas: this.canvas,
-      antialias: true,
-    });
-    this.mainScene = new Scene();
+  constructor(
+    renderer: WebGLRenderer,
+    canvas: HTMLCanvasElement,
+    scene: Scene,
+    cameraController: CameraController,
+  ) {
+    super(renderer, canvas, scene);
+    this.main();
+    this.group = new Group();
+    this.scene.add(this.group);
+    this.cameraController = cameraController;
+  }
 
-    this.handleResize(screen.width, screen.height, screen.dpr);
-    screen.subscribe(this.handleResize);
+  async main() {
+    const ambiantLight = new AmbientLight();
+    this.scene.add(ambiantLight);
+    const helmetGroup = await this.loadDamagedHElmet();
+    const sheet = animationManager.getSheetByName("main");
+    if (sheet) {
+      const elemObject = sheet.object("helmet", {
+        location: types.compound({
+          x: types.number(helmetGroup.position.x),
+          y: types.number(helmetGroup.position.y),
+          z: types.number(helmetGroup.position.z),
+        }),
+        rotation: types.compound({
+          x: types.number(helmetGroup.rotation.x),
+          y: types.number(helmetGroup.rotation.y),
+          z: types.number(helmetGroup.rotation.z),
+        }),
+        scale: types.compound({
+          x: types.number(helmetGroup.scale.x),
+          y: types.number(helmetGroup.scale.y),
+          z: types.number(helmetGroup.scale.z),
+        }),
+      });
+      elemObject.onValuesChange((values) => {
+        const { location, rotation, scale } = values;
+        helmetGroup.position.set(location.x, location.y, location.z);
+        helmetGroup.rotation.set(rotation.x, rotation.y, rotation.z);
+        helmetGroup.scale.set(scale.x, scale.y, scale.z);
+      });
+    }
+  }
 
-    const axesHelper = new AxesHelper(1);
-    this.mainScene.add(axesHelper);
-
-    const ground = new TerrainPlane(1000, 2);
-    this.mainScene.add(ground.scene);
-
-    this.mainScene.background = new Color(0x000000);
-
-    const expBox = new ExperimentalBox();
-    this.mainScene.add(expBox.scene);
-
-    this.orbitControls = new OrbitControls(
-      this.camera,
-      this.renderer.domElement,
+  loadDamagedHElmet = async (): Promise<Group> => {
+    const loader = new GLTFLoader();
+    return new Promise((resolve) =>
+      loader.load(
+        "/gltf/DamagedHelmet/DamagedHelmet.gltf",
+        async (gltf) => {
+          const model = gltf.scene;
+          await this.renderer.compileAsync(
+            model,
+            this.cameraController.currentCamera,
+            this.scene,
+          );
+          this.scene.add(model);
+          model.position.set(0, 1, 0);
+          resolve(model);
+        },
+        () => {},
+        (e) => {
+          console.error(e);
+        },
+      ),
     );
-    const guiFolder = gui.addFolder("MAIN");
-    guiFolder.add(this.guiOpt, "orbitControls").onChange((value: boolean) => {
-      if (this.orbitControls) {
-        this.orbitControls.enabled = value;
-      }
+  };
+
+  loadTexture = async (path: string): Promise<Texture> => {
+    const tl = new TextureLoader();
+    return new Promise((resolve, reject) => {
+      tl.load(
+        path,
+        (texture) => {
+          resolve(texture);
+        },
+        () => {},
+        () => {
+          reject();
+        },
+      );
     });
-  }
-
-  handleResize = (width: number, height: number, dpr: number) => {
-    this.canvas.width = width * dpr;
-    this.canvas.height = height * dpr;
-    this.camera.aspect = width / height;
-    this.renderer.setPixelRatio(dpr);
-    this.renderer.setSize(width, height);
-    this.camera.updateProjectionMatrix();
   };
 
-  start() {
-    ticker.subscribe(this.tick, Infinity);
-  }
-
-  private tick = () => {
-    this.orbitControls?.update();
-    this.renderer.render(this.mainScene, this.camera);
+  tick = (_: number, delta: number) => {
+    if (this.group) {
+      this.group.rotation.set(
+        this.group.rotation.x,
+        this.group.rotation.y + delta / 1000,
+        0,
+      );
+    }
   };
-}
-
-function main() {
-  const canvas = document.querySelector("#canvas");
-  if (!canvas || !(canvas instanceof HTMLCanvasElement))
-    return new Error("canvas dom element could not be found");
-
-  const experience = new Experience(canvas);
-  experience.start();
-}
-
-const result = main();
-if (result instanceof Error) {
-  console.error(result.message);
-} else {
-  console.log("programme exited with code 0");
 }
