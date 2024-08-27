@@ -13,6 +13,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -44,4 +48,46 @@ body {
   bottom: 0;
   right: 0;
   top: unset;
+}
+
+#drag_and_drop_zone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  padding: 50px;
+  display: flex;
+
+  backdrop-filter: blur(10px);
+  z-index: 1002;
+  background-color: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  /* transition: opacity 0.3s ease-in; */
+}
+
+.dashed-outline {
+  display: flex;
+  flex-grow: 1;
+  border: dashed 3px white;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50px;
+
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.drag_svg {
+  width: 100px;
+  height: 100px;
+
+  path {
+    fill: #fff;
+  }
+
+  line {
+    stroke: #fff;
+  }
 }

@@ -1,10 +1,10 @@
 import { CameraHelper, PerspectiveCamera, Scene } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import screenManger from "../screenManager";
-import gui from "../gui/gui";
+import screenManger from "../view/screenManager";
+import gui from "../view/UI";
 import GUI, { OptionController } from "lil-gui";
-import { ISheet, types } from "@theatre/core";
-import animationManager from "./theatre";
+import { types } from "@theatre/core";
+import animationController from "./animation-controller";
 
 const VIEWPORT_CAMERA = "viewport camera";
 type CameraStruct = {
@@ -21,7 +21,7 @@ class CameraController {
   private cameras: Array<CameraStruct> = [];
   private guiObj = {
     "current camera": VIEWPORT_CAMERA,
-    "add camera": () => {},
+    "add camera": () => { },
   };
   private cameraChoises: Array<string> = [VIEWPORT_CAMERA];
   private guiFolder: GUI | undefined = undefined;
@@ -72,7 +72,7 @@ class CameraController {
   };
 
   addCameraToMainSheet = (cameraBuffer: CameraStruct) => {
-    const mainSheet = animationManager.getSheetByName("main");
+    const mainSheet = animationController.getSheetByName("main");
     if (!mainSheet) return;
     const animationCamera = mainSheet.object(cameraBuffer.name, {
       location: types.compound({

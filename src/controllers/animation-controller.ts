@@ -1,7 +1,7 @@
 import { getProject, IProject, ISheet } from "@theatre/core";
 import studio from "@theatre/studio";
 
-class AnimationManager {
+class AnimationController {
   project: IProject;
   sheets: Array<ISheet> = [];
   constructor() {
@@ -12,7 +12,9 @@ class AnimationManager {
   createSheet = (sheetName: string): ISheet => {
     const newSheet = this.project.sheet(sheetName);
     this.sheets.push(newSheet);
+    newSheet.object
     return newSheet;
+
   };
 
   getSheetByName = (name: string) => {
@@ -20,5 +22,5 @@ class AnimationManager {
   };
 }
 
-const animationManager = new AnimationManager();
+const animationManager = new AnimationController();
 export default animationManager;

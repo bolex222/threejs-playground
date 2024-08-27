@@ -9,18 +9,19 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/three": "^0.167.2",
     "typescript": "^5.2.2",
-    "vite": "^5.3.4",
-    "@types/three": "^0.167.2"
+    "vite": "^5.3.4"
   },
   "dependencies": {
+    "@theatre/core": "^0.7.2",
+    "@theatre/studio": "^0.7.2",
     "@types/stats.js": "^0.17.3",
     "@types/three": "^0.167.1",
+    "@types/toastify-js": "^1.12.3",
     "lil-gui": "^0.19.2",
     "stats.js": "^0.17.0",
     "three": "^0.167.0",
-    "@theatre/core": "^0.7.2",
-    "@theatre/studio": "^0.7.2",
     "toastify-js": "^1.12.0"
   }
 }

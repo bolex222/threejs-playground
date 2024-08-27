@@ -7,6 +7,36 @@
     <title>Vite + TS</title>
   </head>
   <body>
+    <div id="drag_and_drop_zone">
+      <div class="dashed-outline">
+        <svg
+          class="drag_svg"
+          id="Layer_2"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 70.5 91"
+        >
+          <defs>
+            <style>
+              .cls-1 {
+                fill: none;
+                stroke: #fff;
+                stroke-linecap: round;
+                stroke-miterlimit: 10;
+              }
+            </style>
+          </defs>
+          <path
+            d="M45.01,0H4C1.79,0,0,1.79,0,4v83c0,2.21,1.79,4,4,4h62.5c2.21,0,4-1.79,4-4V25.49L45.01,0ZM69.5,87c0,1.65-1.35,3-3,3H4c-1.65,0-3-1.35-3-3V4c0-1.65,1.35-3,3-3h40.5v20.84c0,2.3,1.86,4.16,4.16,4.16h20.84v61Z"
+          />
+          <line class="cls-1" x1="14.5" y1="43.75" x2="58" y2="43.75" />
+          <line class="cls-1" x1="14.47" y1="33.5" x2="32.72" y2="33.5" />
+          <line class="cls-1" x1="14.44" y1="52.96" x2="57.95" y2="52.96" />
+          <line class="cls-1" x1="14.41" y1="62.96" x2="57.92" y2="62.96" />
+          <line class="cls-1" x1="14.39" y1="72.96" x2="57.89" y2="72.96" />
+        </svg>
+        <p class="drag_text">Drop your file.</p>
+      </div>
+    </div>
     <canvas id="canvas"></canvas>
     <script type="module" src="/src/core/entry.ts"></script>
   </body>

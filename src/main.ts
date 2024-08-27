@@ -8,9 +8,9 @@ import {
 } from "three";
 import { ExperienceSetter } from "./core/ExperienceSetter";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
-import animationManager from "./core/theatre";
+import animationController from "./controllers/animation-controller";
 import { types } from "@theatre/core";
-import CameraController from "./core/CameraController";
+import CameraController from "./controllers/camera-controller";
 
 export class Experience extends ExperienceSetter {
   private group: Group;
@@ -30,35 +30,35 @@ export class Experience extends ExperienceSetter {
   }
 
   async main() {
-    const ambiantLight = new AmbientLight();
-    this.scene.add(ambiantLight);
-    const helmetGroup = await this.loadDamagedHElmet();
-    const sheet = animationManager.getSheetByName("main");
-    if (sheet) {
-      const elemObject = sheet.object("helmet", {
-        location: types.compound({
-          x: types.number(helmetGroup.position.x),
-          y: types.number(helmetGroup.position.y),
-          z: types.number(helmetGroup.position.z),
-        }),
-        rotation: types.compound({
-          x: types.number(helmetGroup.rotation.x),
-          y: types.number(helmetGroup.rotation.y),
-          z: types.number(helmetGroup.rotation.z),
-        }),
-        scale: types.compound({
-          x: types.number(helmetGroup.scale.x),
-          y: types.number(helmetGroup.scale.y),
-          z: types.number(helmetGroup.scale.z),
-        }),
-      });
-      elemObject.onValuesChange((values) => {
-        const { location, rotation, scale } = values;
-        helmetGroup.position.set(location.x, location.y, location.z);
-        helmetGroup.rotation.set(rotation.x, rotation.y, rotation.z);
-        helmetGroup.scale.set(scale.x, scale.y, scale.z);
-      });
-    }
+    // const ambiantLight = new AmbientLight();
+    // this.scene.add(ambiantLight);
+    // const helmetGroup = await this.loadDamagedHElmet();
+    // const sheet = animationController.getSheetByName("main");
+    // if (sheet) {
+    //   const elemObject = sheet.object("helmet", {
+    //     location: types.compound({
+    //       x: types.number(helmetGroup.position.x),
+    //       y: types.number(helmetGroup.position.y),
+    //       z: types.number(helmetGroup.position.z),
+    //     }),
+    //     rotation: types.compound({
+    //       x: types.number(helmetGroup.rotation.x),
+    //       y: types.number(helmetGroup.rotation.y),
+    //       z: types.number(helmetGroup.rotation.z),
+    //     }),
+    //     scale: types.compound({
+    //       x: types.number(helmetGroup.scale.x),
+    //       y: types.number(helmetGroup.scale.y),
+    //       z: types.number(helmetGroup.scale.z),
+    //     }),
+    //   });
+    //   elemObject.onValuesChange((values) => {
+    //     const { location, rotation, scale } = values;
+    //     helmetGroup.position.set(location.x, location.y, location.z);
+    //     helmetGroup.rotation.set(rotation.x, rotation.y, rotation.z);
+    //     helmetGroup.scale.set(scale.x, scale.y, scale.z);
+    //   });
+    // }
   }
 
   loadDamagedHElmet = async (): Promise<Group> => {
@@ -101,7 +101,7 @@ export class Experience extends ExperienceSetter {
     });
   };
 
-  tick = (_: number, delta: number) => {
+  tick = (_: number, delta: number, frame: number) => {
     if (this.group) {
       this.group.rotation.set(
         this.group.rotation.x,
