@@ -1,11 +1,12 @@
 import { Material, Mesh, Object3D } from "three";
 import materialLibrary from "./materials-library";
+import { ISheetObject, ISheet, types } from "@theatre/core";
 export type RenderModeOptions = "workbench" | "wireframe" | "default";
 
 class MaterialBackup {
-  uuid: string;
-  object: Mesh;
-  sourceMaterial: Material | Array<Material>;
+  public uuid: string;
+  public object: Mesh;
+  public sourceMaterial: Material | Array<Material>;
 
   constructor(object: Mesh) {
     this.object = object;
@@ -43,6 +44,38 @@ class Basic3dElement {
         this.materialBackups.push(backup);
       }
     });
+  };
+
+  convertToAnimationObject = (animationSheet: ISheet): ISheetObject<any> => {
+    const animationObjectBuffer = animationSheet.object(this.object.name, {
+      location: types.compound({
+        x: types.number(this.object.position.x),
+        y: types.number(this.object.position.y),
+        z: types.number(this.object.position.z),
+      }),
+      rotation: types.compound({
+        x: types.number(this.object.rotation.x),
+        y: types.number(this.object.rotation.y),
+        z: types.number(this.object.rotation.z),
+      }),
+      scale: types.compound({
+        x: types.number(this.object.scale.x),
+        y: types.number(this.object.scale.y),
+        z: types.number(this.object.scale.z),
+      }),
+    });
+    animationObjectBuffer.onValuesChange((values) => {
+      const { location, rotation, scale } = values;
+      const { PI } = Math;
+      this.object.position.set(location.x, location.y, location.z);
+      this.object.rotation.set(
+        rotation.x * PI,
+        rotation.y * PI,
+        rotation.z * PI,
+      );
+      this.object.scale.set(scale.x, scale.y, scale.z);
+    });
+    return animationObjectBuffer;
   };
 
   set renderMode(value: RenderModeOptions) {

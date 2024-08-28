@@ -2,6 +2,7 @@ import { Object3D } from "three";
 import Basic3dElement, { RenderModeOptions } from "../models/Basic3DElement";
 import editorsWorld from "../models/EditorsWorld";
 import Environement3DElement from "../models/Environement3DElements";
+import { addBasicElementToAllSheet } from "./animation-controller";
 
 export const addEnvironement3DElement = (
   element: Environement3DElement | Object3D,
@@ -21,6 +22,7 @@ export const addBasic3DElement = (element: Basic3dElement | Object3D) => {
   parsedElement.renderMode = editorsWorld.renderMode;
   editorsWorld.basic3dElements.push(parsedElement);
   editorsWorld.scene.add(parsedElement.object);
+  addBasicElementToAllSheet(parsedElement);
 };
 
 export const setRenderMode = (value: RenderModeOptions) => {

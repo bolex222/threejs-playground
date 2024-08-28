@@ -42,7 +42,7 @@ export const parseGlbFile = async (
         },
       );
     } catch (_) {
-      throw new Error("Impossible to parse the glb file bis");
+      throw new Error("Impossible to parse the glb file");
     }
   });
 };
